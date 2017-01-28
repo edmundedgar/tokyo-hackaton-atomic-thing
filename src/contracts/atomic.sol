@@ -14,7 +14,7 @@ contract Atomic {
         uint256 price, 
         uint256 expiry, 
         bytes32 external_id, 
-        bytes32 status
+        uint256 status
     );
 
     struct Hold {
@@ -36,6 +36,7 @@ contract Atomic {
         for(i=0; i<hold_ids.length; i++) {
             bytes32 hold_id = hold_ids[i];
             if (holds[hold_id].status != 1) throw;
+            if (holds[hold_id].expiry < now) throw;
             holds[hold_id].status = 2;
             if (!holds[hold_id].company.send(holds[hold_id].price)) throw;
             LogHoldChange(hold_id, holds[hold_id].user, holds[hold_id].company, holds[hold_id].price, holds[hold_id].expiry, holds[hold_id].external_id, 2);
@@ -47,6 +48,7 @@ contract Atomic {
         for(i=0; i<hold_ids.length; i++) {
             bytes32 hold_id = hold_ids[i];
             if (holds[hold_id].status != 1) return false;
+            if (holds[hold_id].expiry < now) return false;
         }
         return true;
     }
@@ -57,7 +59,7 @@ contract Atomic {
         uint256 bal = 0;
         for(i=0; i<hold_ids.length; i++) {
             bytes32 hold_id = hold_ids[i];
-            if (holds[hold_id].status == 1) {
+            if ( (holds[hold_id].status == 1) && (holds[hold_id].expiry > now) ){
                 bal = bal + holds[hold_id].price;
             }
         }
