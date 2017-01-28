@@ -84,7 +84,7 @@ contract Atomic {
         return hold_id;
     }
 
-    function holdIDForParameters(address user, address company, uint256 price, uint256 expiry, bytes32 external_id) returns (bytes32 hold_id) {
+    function holdIDForParameters(address user, address company, uint256 price, uint256 expiry, bytes32 external_id) constant returns (bytes32 hold_id) {
         return sha3(user, company, price, expiry, external_id);
     }
 
