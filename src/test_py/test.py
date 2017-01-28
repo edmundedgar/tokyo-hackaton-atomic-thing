@@ -15,7 +15,7 @@ class AtomicThingTest(TestCase):
 
         self.s = t.state()
 
-        atom_code = open('atomic.sol').read()
+        atom_code = open('../truffle/contracts/Atomic.sol').read()
         self.atomicthing = self.s.abi_contract(atom_code, language='solidity', sender=t.k0)
 
         self.o = []
@@ -103,6 +103,20 @@ class AtomicThingTest(TestCase):
         self.assertTrue(failed, "Should fail with insufficient value")
 
         self.atomicthing.complete([hold_id2, hold_id3], value=(200000+250000))
+
+        self.assertEqual(self.atomicthing.countUserHolds(keys.privtoaddr(t.k0)), 3)
+
+        user_hold_1 = self.atomicthing.userHoldAtIndex(keys.privtoaddr(t.k0), 0)
+        self.assertEqual(user_hold_1[0], hold_id1)
+        #self.assertEqual(encode_hex(user_hold_1[2]), keys.privtoaddr(t.k1))
+        self.assertTrue(user_hold_1[7])
+
+        user_hold_3 = self.atomicthing.userHoldAtIndex(keys.privtoaddr(t.k0), 2)
+        self.assertEqual(user_hold_3[0], hold_id3)
+        # self.assertEqual(user_hold_3[2], keys.privtoaddr(t.k4))
+        self.assertFalse(user_hold_3[7])
+
+
 
 
 if __name__ == '__main__':

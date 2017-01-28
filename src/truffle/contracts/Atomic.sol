@@ -53,6 +53,32 @@ contract Atomic {
         return true;
     }
 
+    function countUserHolds(address user) constant returns (uint256) {
+        return user_holds[user].length;
+    }
+
+    function countCompanyHolds(address company) constant returns (uint256) {
+        return company_holds[company].length;
+    }
+
+    function userHoldAtIndex(address this_user, uint256 idx) constant returns (bytes32 hold_id, address user, address company, uint256 price, uint256 expiry, bytes32 external_id, uint256 status, bool has_next) {
+        bytes32 this_hold_id;
+        if (idx < user_holds[this_user].length ) {
+            this_hold_id = user_holds[this_user][idx];
+        }
+        bool hold_has_next = (idx+1 < user_holds[this_user].length); 
+        Hold hold = holds[this_hold_id];
+        return (
+            this_hold_id,
+            hold.user,
+            hold.company,
+            hold.price,
+            hold.expiry,
+            hold.external_id,
+            hold.status,
+            hold_has_next
+        );
+    }
 
     function balancePayable(bytes32[] hold_ids) constant returns (uint256) {
         uint256 i;
