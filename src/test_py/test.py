@@ -116,6 +116,8 @@ class AtomicThingTest(TestCase):
         # self.assertEqual(user_hold_3[2], keys.privtoaddr(t.k4))
         self.assertFalse(user_hold_3[7])
 
+        company_hold_3 = self.atomicthing.companyHoldAtIndex(keys.privtoaddr(t.k4), 0)
+        self.assertEqual(company_hold_3[0], hold_id3)
 
 
 
