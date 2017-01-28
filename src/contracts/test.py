@@ -9,7 +9,7 @@ from sha3 import sha3_256
 import os
 
 
-class TestRNDD(TestCase):
+class AtomicThingTest(TestCase):
 
     def setUp(self):
 
