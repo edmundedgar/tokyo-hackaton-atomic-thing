@@ -1,7 +1,112 @@
+@charset "utf-8";
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-style:normal;
+  font-weight: normal;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, menu, nav, section, video {
+  display: block;
+}
+
+html{
+  overflow-y: scroll;
+  font-family:Avenir , "Helvetica Neue" , Helvetica , Arial , Verdana , Roboto , "游ゴシック" , "Yu Gothic" , "游ゴシック体" , "YuGothic" , "ヒラギノ角ゴ Pro W3" , "Hiragino Kaku Gothic Pro" , "Meiryo UI" , "メイリオ" , Meiryo , "ＭＳ Ｐゴシック" , "MS PGothic" , sans-serif;
+  font-size: 14px;
+  line-height: 1.42857;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+input, textarea,{
+  margin: 0;
+  padding: 0;
+}
+
+ol, ul{
+  list-style:none;
+}
+
+table{
+  border-collapse: collapse;
+  border-spacing:0;
+}
+
+caption, th{
+  text-align: left;
+}
+
+a:focus {
+  outline:none;
+}
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  height: 0;
+  visibility: hidden;
+}
+
+.clearfix {
+  min-height: 1px;
+}
+
+* html .clearfix {
+  height: 1px;
+  /*¥*//*/
+  height: auto;
+  overflow: hidden;
+  /**/
+}
+
+.both{
+  clear:both;
+}
+
+.inline_block {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+}
+a, a:hover {
+  text-decoration: none;
+}
+a,a:hover {
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+
+
 body {
-  margin-left: 25%;
-  margin-right: 25%;
-  margin-top: 10%;
   font-family: "Open Sans", sans-serif;
 }
 
@@ -44,5 +149,115 @@ h3 {
 }
 
 #balance {
-  color: black;
+  color: #000;
+}
+
+#wrap {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#hold_list {
+  
+}
+
+#hold_list .item {
+  position: relative;
+  display: flex;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+  border: 1px solid #ccc;
+}
+
+#hold_list .select {
+  position: relative;
+  display: flex;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+}
+
+#hold_list .select button{
+  width: 50%;
+  height:  50px;
+}
+
+#hold_list .select button.add {
+  border: none;
+  background: #5cb85c;
+}
+
+#hold_list .select button.remove {
+  border: none;
+  background: #d9534f;
+}
+
+#hold_list .item .hold_thumb {
+  width: 20%;
+}
+
+#hold_list .item .hold_thumb img {
+  display: block;
+  width: 100%;
+}
+
+#hold_list .item .hold_content {
+  width: 80%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+#hold_list .item .hold_content .title {
+  padding: 10px 0 0;
+}
+
+#hold_list .item .hold_content .detail {
+  display: flex;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-justify-content: space-between;
+          justify-content: space-between;
+}
+
+#hold_list .item .hold_content .detail li {
+  height: 30px;
+}
+
+#hold_list .item .hold_content .detail li span {
+  display: block;
+}
+
+#hold_list .item .hold_content .detail li span.price {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+#hold_list .item .hold_content .detail li span.price::after {
+  content: 'ETH';
+}
+
+#hold_list .item .hold_content .detail li span.expiry {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+#hold_list .item .hold_content .detail li:nth-child(1) {
+  width: 50%;
+}
+
+#hold_list .item .hold_content .detail li:nth-child(2) {
+  width: 25%;
+  text-align: right;
+}
+
+#hold_list .item .hold_content .detail li:nth-child(3) {
+  width: 25%;
+  text-align: right;
 }

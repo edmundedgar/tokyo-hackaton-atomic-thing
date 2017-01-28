@@ -231,13 +231,13 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("MetaCoin error: Please call setProvider() first before calling new().");
+      throw new Error("Atomic error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("MetaCoin error: contract binary not set. Can't deploy new instance.");
+      throw new Error("Atomic error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -256,7 +256,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("MetaCoin contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of MetaCoin: " + unlinked_libraries);
+      throw new Error("Atomic contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Atomic: " + unlinked_libraries);
     }
 
     var self = this;
@@ -297,7 +297,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to MetaCoin.at(): " + address);
+      throw new Error("Invalid address passed to Atomic.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -308,7 +308,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: MetaCoin not deployed or address not set.");
+      throw new Error("Cannot find deployed address: Atomic not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -353,11 +353,29 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "constant": false,
         "inputs": [
           {
-            "name": "addr",
-            "type": "address"
+            "name": "hold_id",
+            "type": "bytes32"
           }
         ],
-        "name": "getBalanceInEth",
+        "name": "removeHoldByCompany",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "hold_id",
+            "type": "bytes32"
+          }
+        ],
+        "name": "getHoldStatus",
         "outputs": [
           {
             "name": "",
@@ -371,18 +389,110 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "constant": false,
         "inputs": [
           {
-            "name": "receiver",
+            "name": "hold_ids",
+            "type": "bytes32[]"
+          }
+        ],
+        "name": "complete",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": true,
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "name": "holds",
+        "outputs": [
+          {
+            "name": "user",
             "type": "address"
           },
           {
-            "name": "amount",
+            "name": "company",
+            "type": "address"
+          },
+          {
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "name": "expiry",
+            "type": "uint256"
+          },
+          {
+            "name": "external_id",
+            "type": "bytes32"
+          },
+          {
+            "name": "status",
             "type": "uint256"
           }
         ],
-        "name": "sendCoin",
+        "payable": false,
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "hold_ids",
+            "type": "bytes32[]"
+          }
+        ],
+        "name": "balancePayable",
         "outputs": [
           {
-            "name": "sufficient",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address"
+          },
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "user_holds",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "payable": false,
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "hold_id",
+            "type": "bytes32"
+          }
+        ],
+        "name": "removeHoldByUser",
+        "outputs": [
+          {
+            "name": "",
             "type": "bool"
           }
         ],
@@ -393,78 +503,197 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "constant": false,
         "inputs": [
           {
-            "name": "addr",
+            "name": "company",
             "type": "address"
+          },
+          {
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "name": "expiry",
+            "type": "uint256"
+          },
+          {
+            "name": "external_id",
+            "type": "bytes32"
           }
         ],
-        "name": "getBalance",
+        "name": "createHold",
         "outputs": [
           {
-            "name": "",
-            "type": "uint256"
+            "name": "created_hold_id",
+            "type": "bytes32"
           }
         ],
         "payable": false,
         "type": "function"
       },
       {
-        "inputs": [],
+        "constant": true,
+        "inputs": [
+          {
+            "name": "user",
+            "type": "address"
+          },
+          {
+            "name": "company",
+            "type": "address"
+          },
+          {
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "name": "expiry",
+            "type": "uint256"
+          },
+          {
+            "name": "external_id",
+            "type": "bytes32"
+          }
+        ],
+        "name": "holdIDForParameters",
+        "outputs": [
+          {
+            "name": "hold_id",
+            "type": "bytes32"
+          }
+        ],
         "payable": false,
-        "type": "constructor"
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address"
+          },
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "company_holds",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "payable": false,
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "hold_ids",
+            "type": "bytes32[]"
+          }
+        ],
+        "name": "isValid",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "type": "function"
       },
       {
         "anonymous": false,
         "inputs": [
           {
             "indexed": true,
-            "name": "_from",
+            "name": "hold_id",
+            "type": "bytes32"
+          },
+          {
+            "indexed": true,
+            "name": "user",
             "type": "address"
           },
           {
             "indexed": true,
-            "name": "_to",
+            "name": "company",
             "type": "address"
           },
           {
             "indexed": false,
-            "name": "_value",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "expiry",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "external_id",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "name": "status",
             "type": "uint256"
           }
         ],
-        "name": "Transfer",
+        "name": "LogHoldChange",
         "type": "event"
       }
     ],
-    "unlinked_binary": "0x606060405234610000575b600160a060020a033216600090815260208190526040902061271090555b5b610223806100386000396000f300606060405263ffffffff60e060020a6000350416637bd703e8811461003a57806390b98a1114610065578063f8b2cb4f14610095575b610000565b3461000057610053600160a060020a03600435166100c0565b60408051918252519081900360200190f35b3461000057610081600160a060020a0360043516602435610140565b604080519115158252519081900360200190f35b3461000057610053600160a060020a03600435166101d8565b60408051918252519081900360200190f35b600073__ConvertLib____________________________6396e4ee3d6100e5846101d8565b60026000604051602001526040518363ffffffff1660e060020a028152600401808381526020018281526020019250505060206040518083038186803b156100005760325a03f415610000575050604051519150505b919050565b600160a060020a03331660009081526020819052604081205482901015610169575060006101d2565b600160a060020a0333811660008181526020818152604080832080548890039055938716808352918490208054870190558351868152935191937fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929081900390910190a35060015b92915050565b600160a060020a0381166000908152602081905260409020545b9190505600a165627a7a7230582088c9abf42f2d74d5df0919f22eb5bd610821170f23775224596dd5f9dff59f4f0029",
+    "unlinked_binary": "0x606060405234610000575b610a5d806100196000396000f300606060405236156100935763ffffffff60e060020a6000350416630d62cd3b81146100985780631ff7f2a8146100bc57806344fabe8a146100de5780637175a3c21461013d57806377aba7c41461018c57806386da32c5146101ee578063a6ae557d1461021c578063c92e7d0f14610240578063d607ffe214610274578063f0fd6e62146102ae578063f56f516f146102dc575b610000565b34610000576100a8600435610340565b604080519115158252519081900360200190f35b34610000576100cc60043561040b565b60408051918252519081900360200190f35b6100a860048080359060200190820180359060200190808060200260200160405190810160405280939291908181526020018383602002808284375094965061042395505050505050565b604080519115158252519081900360200190f35b346100005761014d60043561055a565b60408051600160a060020a039788168152959096166020860152848601939093526060840191909152608083015260a082015290519081900360c00190f35b34610000576100cc60048080359060200190820180359060200190808060200260200160405190810160405280939291908181526020018383602002808284375094965061059e95505050505050565b60408051918252519081900360200190f35b34610000576100cc600160a060020a036004351660243561062f565b60408051918252519081900360200190f35b34610000576100a860043561065e565b604080519115158252519081900360200190f35b34610000576100cc600160a060020a0360043516602435604435606435610726565b60408051918252519081900360200190f35b34610000576100cc600160a060020a036004358116906024351660443560643560843561090a565b60408051918252519081900360200190f35b34610000576100cc600160a060020a036004351660243561095d565b60408051918252519081900360200190f35b34610000576100a860048080359060200190820180359060200190808060200260200160405190810160405280939291908181526020018383602002808284375094965061098c95505050505050565b604080519115158252519081900360200190f35b60008181526002602052604081206001015433600160a060020a0390811691161461036a57610000565b600082815260026020819052604090912060050154141561038d57506000610406565b6000828152600260208181526040808420600581018590556001810154815494820154600383015460049093015484519182529481019290925281830193909352606081019490945251600160a060020a039182169392909116918591600080516020610a128339815191529181900360800190a45060015b919050565b6000818152600260205260409020600501545b919050565b600080805b835182101561055257838281518110156100005760209081029091018101516000818152600290925260409091206005015490915060011461046957610000565b6000818152600260205260409020600301544290101561048857610000565b60008181526002602081905260408083206005810183905560018101549201549051600160a060020a039092169281156108fc029290818181858888f1935050505015156104d557610000565b600081815260026020818152604092839020600181015481548285015460038401546004909401548751918252948101939093528286019390935260608201939093529251600160a060020a039283169391909216918491600080516020610a12833981519152919081900360800190a45b600190910190610428565b5b5050919050565b6002602081905260009182526040909120805460018201549282015460038301546004840154600590940154600160a060020a039384169590931693919290919086565b60008080805b845183101561062357848381518110156100005760209081029091018101516000818152600290925260409091206005015490915060011480156105f957506000818152600260205260409020600301544290115b15610617576000818152600260208190526040909120015491909101905b5b6001909201916105a4565b8193505b505050919050565b600060205281600052604060002081815481101561000057906000526020600020900160005b91509150505481565b60008181526002602052604081205433600160a060020a0390811691161461036a57610000565b600082815260026020819052604090912060050154141561038d57506000610406565b6000828152600260208181526040808420600581018590556001810154815494820154600383015460049093015484519182529481019290925281830193909352606081019490945251600160a060020a039182169392909116918591600080516020610a128339815191529181900360800190a45060015b919050565b60006000610737338787878761090a565b6040805160c081018252600160a060020a033381168083528a821660208085019182528486018c8152606086018c8152608087018c8152600160a0890181815260008c815260028088528c82209b518c54908c1673ffffffffffffffffffffffffffffffffffffffff19918216178d5598518c8501805491909c16991698909817909955935195890195909555905160038801555160048701555160059095019490945590825291819052919091208054918201808255929350918281838015829011610829576000838152602090206108299181019083015b808211156108255760008155600101610811565b5090565b5b505050916000526020600020900160005b5082905550600160a060020a03861660009081526001602081905260409091208054918201808255909190828183801582901161089d5760008381526020902061089d9181019083015b808211156108255760008155600101610811565b5090565b5b505050916000526020600020900160005b50829055506040805186815260208101869052808201859052600160608201529051600160a060020a038089169233909116918491600080516020610a12833981519152919081900360800190a48091505b50949350505050565b604080516c01000000000000000000000000600160a060020a0380891682028352871602601482015260288101859052604881018490526068810183905290519081900360880190205b95945050505050565b600160205281600052604060002081815481101561000057906000526020600020900160005b91509150505481565b600080805b8351821015610a055783828151811015610000576020908102909101810151600081815260029092526040909120600501549091506001146109d65760009250610552565b600081815260026020526040902060030154429010156109f95760009250610552565b5b600190910190610991565b600192505b50509190505600f15b386eb7776c0bcfff267d12796fdec72bf68313d8608be4ac55331d8128caa165627a7a72305820944d9b3aa0616de1c7c5998dc495736d54ac5ac9110261c055df341486f311090029",
     "events": {
-      "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+      "0xf15b386eb7776c0bcfff267d12796fdec72bf68313d8608be4ac55331d8128ca": {
         "anonymous": false,
         "inputs": [
           {
             "indexed": true,
-            "name": "_from",
+            "name": "hold_id",
+            "type": "bytes32"
+          },
+          {
+            "indexed": true,
+            "name": "user",
             "type": "address"
           },
           {
             "indexed": true,
-            "name": "_to",
+            "name": "company",
             "type": "address"
           },
           {
             "indexed": false,
-            "name": "_value",
+            "name": "price",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "expiry",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "external_id",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "name": "status",
             "type": "uint256"
           }
         ],
-        "name": "Transfer",
+        "name": "LogHoldChange",
         "type": "event"
       }
     },
-    "updated_at": 1485631330505,
-    "links": {
-      "ConvertLib": "0x588cc00e8461f92e31eef3ad4f6aa3061870d91d"
-    },
-    "address": "0x944b94dcf57dc602fcc1a613d0f2dfcef82ed7c3"
+    "updated_at": 1485631330499,
+    "links": {},
+    "address": "0x89c3c6b7a9a1f9b95dbf0d599b2680f35be47b6b"
   }
 };
 
@@ -549,7 +778,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "MetaCoin";
+  Contract.contract_name   = Contract.prototype.contract_name   = "Atomic";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.2.0";
 
   // Allow people to opt-in to breaking changes now.
@@ -589,6 +818,6 @@ var SolidityEvent = require("web3/lib/web3/event.js");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.MetaCoin = Contract;
+    window.Atomic = Contract;
   }
 })();

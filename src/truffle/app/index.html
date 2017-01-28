@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="en">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MetaCoin - Default Truffle App</title>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <link href="./app.css" rel='stylesheet' type='text/css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="./app.js"></script>
 </head>
 <body>
-  <h1>MetaCoin</h1>
+  <!-- <h1>MetaCoin</h1>
   <h2>Example Truffle Dapp</h2>
   <h3>You have <span class="black"><span id="balance"></span> META</span></h3>
 
@@ -16,7 +21,83 @@
   <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
   <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
   <br><br><button id="send" onclick="sendCoin()">Send MetaCoin</button>
-  <br><br>
-  <span id="status"></span>
+  <br><br> -->
+
+<div id="wrap">
+<h3>You have <span class="black"><span id="balance"></span> META</span></h3>
+<span id="status"></span>
+  <!-- dapp -->
+  <ul id="hold_list">
+    <!-- example -->
+    <li>
+      <div class="item">
+        <div class="hold_thumb"><img src="images/sample_hotel.jpg"></div>
+        <div class="hold_content">
+          <h2 class="title">Hotel Machida Villa </h2>
+          <ul class="detail">
+            <li>Just two minutes from Machida Station. Comfortable hotel with 164 rooms of various types.</li>
+            <li><span>price</span><span class="price">15000</span></li>
+            <li><span>expiry</span><span class="expiry">Jun,31,2017</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="select">
+        <button class="add" onclick="createHold('0x53d284357ec70ce289d6d64134dfac8e511c8a3d',10000,1485685902,'e1');">Add</button>
+        <button class="remove">Cancel</button>
+      </div>
+    </li>
+    <li>
+      <div class="item">
+        <div class="hold_thumb"><img src="images/sample_hotel.jpg"></div>
+        <div class="hold_content">
+          <h2 class="title">Hotel Machida Villa </h2>
+          <ul class="detail">
+            <li>Just two minutes from Machida Station. Comfortable hotel with 164 rooms of various types.</li>
+            <li><span>price</span><span class="price">15000</span></li>
+            <li><span>expiry</span><span class="expiry">Jun,31,2017</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="select">
+        <button class="add">Add</button>
+        <button class="remove">Cancel</button>
+      </div>
+    </li>
+    <li>
+      <div class="item">
+        <div class="hold_thumb"><img src="images/sample_hotel.jpg"></div>
+        <div class="hold_content">
+          <h2 class="title">Hotel Machida Villa </h2>
+          <ul class="detail">
+            <li>Just two minutes from Machida Station. Comfortable hotel with 164 rooms of various types.</li>
+            <li><span>price</span><span class="price">15000</span></li>
+            <li><span>expiry</span><span class="expiry">Jun,31,2017</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="select">
+        <button class="add">Add</button>
+        <button class="remove">Cancel</button>
+      </div>
+    </li>
+    <li>
+      <div class="item">
+        <div class="hold_thumb"><img src="images/sample_hotel.jpg"></div>
+        <div class="hold_content">
+          <h2 class="title">Hotel Machida Villa </h2>
+          <ul class="detail">
+            <li>Just two minutes from Machida Station. Comfortable hotel with 164 rooms of various types.</li>
+            <li><span>price</span><span class="price">15000</span></li>
+            <li><span>expiry</span><span class="expiry">Jun,31,2017</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="select">
+        <button class="add">Add</button>
+        <button class="remove">Cancel</button>
+      </div>
+    </li>
+  </ul>
+</div>
 </body>
 </html>

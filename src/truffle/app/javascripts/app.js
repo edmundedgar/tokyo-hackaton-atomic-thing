@@ -36,29 +36,42 @@ function sendCoin() {
 };
 
 function watchEvent() {
-  var meta = MetaCoin.deployed();
-  var event = meta.Transfer();
-  
-  event.watch(function(error,result){
-    console.log('watching "Set" event!',error);
+  var atomic = Atomic.deployed();
+  var event = atomic.LogHoldChange();
+
+  event.watch(function(error, result){
     if (!error) {
       console.log(result);
     } else {
-      console.log('!!!ERROR_EVENT!!!');
-    }
-  })
-
-  var filter = web3.eth.filter('latest');
-
-  filter.watch(function(error,result){
-    console.log('watching "Set" filter!',error);
-    if (!error) {
-      console.log(result);
-    } else {
-      console.log('!!!ERROR_FILTER!!!');
+      console.log('!!!ERROR!!!')
     }
   })
 }
+
+function createHold(company, price, expiry, extid){
+  var atomic = Atomic.deployed();
+  console.log(company, price, expiry, extid, account)
+  atomic.createHold(company, price, expiry, extid, {from: account}).then(function() {
+    console.log(atomic);
+  }).catch(function(e) {
+    console.log(e);
+  });
+
+}
+
+function removeHoldByUser(extid){
+
+}
+
+function getHoldStatus(){
+  var atomic = Atomic.deployed();
+  console.log(atomic.holds.length);
+}
+
+
+
+
+
 
 window.onload = function() {
   web3.eth.getAccounts(function(err, accs) {
@@ -77,6 +90,7 @@ window.onload = function() {
 
     refreshBalance();
     watchEvent();
+    getHoldStatus();
   });
 
   web3.eth.filter("latest").watch(function(e, blockHash) {
