@@ -10,11 +10,6 @@ function watchEvent() {
   event.watch(function(error, result){
     if (!error) {
       console.log('LogHoldChange',result);
-      $('.price').each(function(){
-        totalAmount = totalAmount + parseFloat(($(this).text()));
-        console.log(totalAmount);
-      })
-      $('#total').text(totalAmount);
     } else {
       console.log('!!!ERROR!!!')
     }
@@ -33,15 +28,22 @@ function createHold(company, price, expiry, extid, url){
 
 }
 
-// function balancePayable(){
-//   var atomic = Atomic.deployed();
-//   getUserHolds();
-//   atomic.balancePayable.call(hold_ids, {from: account}).then(function(value){
-//     console.log(value);
-//   }).catch(function(e){
-//     console.log(e);
-//   });
-// }
+function balancePayable(){
+  var atomic = Atomic.deployed();
+  // getUserHolds();
+  hold_ids = [];
+  $('.hold_id').each(function() {
+    hold_ids.push($(this).val());
+  });
+  console.log(hold_ids);
+
+  atomic.balancePayable.call(hold_ids, {from: account}).then(function(value){
+    console.log(value);
+    $('#total').val(value.toString())
+  }).catch(function(e){
+    console.log(e);
+  });
+}
 
 function isValid(){
   var atomic = Atomic.deployed();
@@ -84,23 +86,28 @@ function getUserHolds(){
 
 function complete(){
   var atomic = Atomic.deployed();
-  getUserHolds();
-  atomic.balancePayable.call(hold_ids).then(function(val){
-    console.log('val',val.toString());
+
+  hold_ids = [];
+  $('.hold_id').each(function() {
+    hold_ids.push($(this).val());
+  });
+
+  atomic.isValid.call(hold_ids).then(function(bool){
+    console.log('hold_ids', hold_ids[2]);
+    if (bool) { 
+      atomic.balancePayable.call(hold_ids).then(function(total){
+        atomic.complete(hold_ids, {from: account, value: total}).then(function(result){
+          console.log(result);
+        }).catch(function(e){
+          console.log(e);
+        })
+      }).catch(function(e){
+        console.log(e);
+      });
+    }
   }).catch(function(e){
     console.log(e);
   });
-  // atomic.isValid.call(hold_ids).then(function(bool){
-  //   console.log('hold_ids', hold_ids[2]);
-  //   if (bool) {
-      
-
-  //   } else {
-  //     console.log(bool)
-  //   }
-  // }).catch(function(e){
-  //   console.log(e);
-  // });
 
 }
 
@@ -159,46 +166,49 @@ function initHoldList(){
     holdCount = value.c[0];
     for (var i = holdCount - 1; i >= 0; i--) {
       atomic.userHoldAtIndex.call(account, i).then(function(item){
-        // console.log('item', item)
-        $.ajax({
-          type: 'get',
-          dataType: 'json',
-          url: item[8]
-        }).done(function(res) {
-          // console.log(res);
-          var data = res[0];
-          var $container = $('<tr />'),
-              $holdThumbWrap = $('<th />'),
-              $holdDetailWrap = $('<td />'),
-              $holdPriceWrap = $('<td />'),
-              $holdExpiryWrap = $('<td />'),
-              $btnWrap = $('<td />');
+        console.log(item);
+        if(item[6].c[0] == 1){
+          $.ajax({
+            type: 'get',
+            dataType: 'json',
+            url: item[8]
+          }).done(function(res) {
+            // console.log(res);
+            var data = res[0];
+            var $container = $('<tr />'),
+                $holdThumbWrap = $('<th />'),
+                $holdDetailWrap = $('<td />'),
+                $holdPriceWrap = $('<td />'),
+                $holdExpiryWrap = $('<td />'),
+                $btnWrap = $('<td />');
 
-          var $photo = $('<img />').attr('src', data.thumb),
-              $title = $('<h2 />').addClass('title').text(data.title),
-              $detail = $('<p />').addClass('detail').text(data.detail),
-              $price = $('<h2 />').addClass('title price').text(data.price),
-              $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
-              $removeBtn = $('<button />').addClass('remove').text('REMOVE');
+            var $photo = $('<img />').attr('src', data.thumb),
+                $title = $('<h2 />').addClass('title').text(data.title),
+                $detail = $('<p />').addClass('detail').text(data.detail),
+                $price = $('<h2 />').addClass('title price').text(data.price),
+                $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
+                $removeBtn = $('<button />').addClass('remove').text('REMOVE');
 
-          var $hold_id_box = $('<input class="hold_id" type="text" />').val(item[0]);
-          $holdExpiryWrap.append($hold_id_box);
+            var $hold_id_box = $('<input class="hold_id" type="text" />').val(item[0]);
+            $holdExpiryWrap.append($hold_id_box);
 
-          $holdThumbWrap.append($photo);
-          $holdDetailWrap.append($title).append($detail);
-          $holdPriceWrap.append($price);
-          $holdExpiryWrap.append($expiry);
-          $btnWrap.append($removeBtn);
-          $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap).append($btnWrap);
+            $holdThumbWrap.append($photo);
+            $holdDetailWrap.append($title).append($detail);
+            $holdPriceWrap.append($price);
+            $holdExpiryWrap.append($expiry);
+            $btnWrap.append($removeBtn);
+            $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap).append($btnWrap);
 
-          $target.append($container);
-          }).fail(function(e){
-            console.log(e);
-          });
+            $target.append($container);
+            }).fail(function(e){
+              console.log(e);
+            });
+          }
       }).catch(function(e){
         console.log(e);
       })
     }
+    balancePayable();
   }).catch(function(e){
     console.log(e);
   });
@@ -225,8 +235,8 @@ window.onload = function() {
     // refreshBalance();
     if (!document.getElementById('company-page')) {
       initHoldList();
-      watchEvent();
       getUserHolds();
+      watchEvent();
     }
   });
 

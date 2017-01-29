@@ -37,7 +37,7 @@ contract Atomic {
         uint256 i;
         for(i=0; i<hold_ids.length; i++) {
             bytes32 hold_id = hold_ids[i];
-            if (holds[hold_id].status != 1) throw;
+            if (holds[hold_id].status != 1) return false;
             if (holds[hold_id].expiry < now) throw;
             holds[hold_id].status = 2;
             if (!holds[hold_id].company.send(holds[hold_id].price)) throw;

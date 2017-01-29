@@ -255,6 +255,7 @@ table {
 }
 
 table,caption {
+  width: 100%;
   margin: 0 auto;
   border-right: 1px solid #CCC;
   border-left: 1px solid #CCC
@@ -332,8 +333,11 @@ tbody a:visited:after {
   content: "\00A0\221A"
 }
 
+#total::before {
+  content: 'Total: ';
+}
 #total::after {
-  content: 'ETH';
+  content: 'ETHER';
 }
 
 
