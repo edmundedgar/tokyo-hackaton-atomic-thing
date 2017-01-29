@@ -134,7 +134,7 @@ function initHoldList(){
           $title = $('<h2 />').addClass('title').text(data.title),
           $detail = $('<p />').addClass('detail').text(data.detail),
           $price = $('<h2 />').addClass('title price').text(data.price),
-          $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
+          $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry*1000))),
           $addBtn = $('<button />').addClass('add').attr('data-price', web3.toWei(data.price, 'ether')).attr('data-expiry', data.expiry).attr('data-extid', web3.toHex(data.external_id)).attr('data-company', '0xdc36523ab6692b68e5a37614118aaa675691abcd').attr('data-url', pair).text(' ADD ');
 
       $holdThumbWrap.append($photo);
@@ -176,7 +176,7 @@ function initHoldList(){
               $title = $('<h2 />').addClass('title').text(data.title),
               $detail = $('<p />').addClass('detail').text(data.detail),
               $price = $('<h2 />').addClass('title price').text(data.price),
-              $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry)));
+              $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry*1000)));
 
           var $hold_id_box = $('<input class="hold_id" type="text" />').val(item[0]);
           $holdExpiryWrap.append($hold_id_box);
