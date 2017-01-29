@@ -46,7 +46,13 @@ function balancePayable(){
 function isValid(){
   var atomic = Atomic.deployed();
 
-  getUserHolds();
+  //getUserHolds();
+  hold_ids = [];
+  $('.hold_id').each(function() {
+    hold_ids.push($(this).val());
+  });
+  console.log(hold_ids);
+
   atomic.isValid.call(hold_ids, {from: account}).then(function(value){
     console.log(value);
   }).catch(function(e){
@@ -171,6 +177,9 @@ function initHoldList(){
               $detail = $('<p />').addClass('detail').text(data.detail),
               $price = $('<h2 />').addClass('title price').text(data.price),
               $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry)));
+
+          var $hold_id_box = $('<input class="hold_id" type="text" />').val(item[0]);
+          $holdExpiryWrap.append($hold_id_box);
 
           $holdThumbWrap.append($photo);
           $holdDetailWrap.append($title).append($detail);
