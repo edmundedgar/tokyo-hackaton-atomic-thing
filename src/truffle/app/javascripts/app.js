@@ -48,9 +48,10 @@ function watchEvent() {
   })
 }
 
-function createHold(company, price, expiry, extid){
+function createHold(company, price, expiry, extid, url){
   var atomic = Atomic.deployed();
-  console.log(company, price, expiry, extid, account)
+
+  console.log(company, price, expiry, extid, account, url)
   atomic.createHold(company, price, expiry, extid, {from: account}).then(function() {
     console.log(atomic);
   }).catch(function(e) {
@@ -60,17 +61,60 @@ function createHold(company, price, expiry, extid){
 }
 
 function removeHoldByUser(extid){
-
 }
 
-function getHoldStatus(){
+
+
+function getUserHolds(){
   var atomic = Atomic.deployed();
-  console.log(atomic.holds.length);
+  atomic.countUserHolds.call(account).then(function(value){
+    console.log(value);
+  }).catch(function(e){
+    console.log(e);
+  });
+
+  // atomic.user_holds.call().then(function(result){
+  //   console.log(result);
+  // }).catch(function(e){
+  //   console.log(e);
+  //   setStatus("Error getting balance; see log.");
+  // })
 }
 
+function complete(hold_ids){
 
+}
 
+function initHoldList(){
+  var atomic = Atomic.deployed();
+  var holdCount;
+  var pair = location.search.substring(1).split('&');
+  var ffff = 'http://4545.jp/atomic/hotel.json';
+   pair = web3.toAscii(pair[0])
+  console.log(pair)
+  atomic.countUserHolds.call(account).then(function(value){
+    console.log(value);
+    holdCount = value.c[0];
+    for (var i = holdCount - 1; i >= 0; i--) {
+      atomic.userHoldAtIndex.call(account, i).then(function(item){
+        console.log(item);
+      }).catch(function(e){
+        console.log(e);
+      })
+    }
+  }).catch(function(e){
+    console.log(e);
+  });
 
+  var $container = $('<tr />'),
+        $holdPhotoWrap = $('<th />'),
+        $holdTitleWrap = $('<h2 />'),
+        $holdDetailWrap = $('<p />'),
+        $holdPriceWrap = $('<td />'),
+        $holdExpiryWrap = $('<td />'),
+        $addBtnWrap = $('<td />'),
+        $removeBtnWrap = $('<td />');
+}
 
 
 window.onload = function() {
@@ -87,10 +131,11 @@ window.onload = function() {
 
     accounts = accs;
     account = accounts[0];
+    console.log(accs, account)
 
-    refreshBalance();
+    // refreshBalance();
     watchEvent();
-    getHoldStatus();
+    initHoldList();
   });
 
   web3.eth.filter("latest").watch(function(e, blockHash) {

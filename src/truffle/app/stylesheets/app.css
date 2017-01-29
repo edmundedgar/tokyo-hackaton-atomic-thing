@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-html, body, div, span, applet, object, iframe,
+/*html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
@@ -66,26 +66,6 @@ a:focus {
   outline:none;
 }
 
-.clearfix:after {
-  content: ".";
-  display: block;
-  clear: both;
-  height: 0;
-  visibility: hidden;
-}
-
-.clearfix {
-  min-height: 1px;
-}
-
-* html .clearfix {
-  height: 1px;
-  /*¥*//*/
-  height: auto;
-  overflow: hidden;
-  /**/
-}
-
 .both{
   clear:both;
 }
@@ -143,7 +123,7 @@ h3 {
   color: #AAA;
   font-size: 24px;
 }
-
+*/
 .black {
   color: black;
 }
@@ -260,4 +240,90 @@ h3 {
 #hold_list .item .hold_content .detail li:nth-child(3) {
   width: 25%;
   text-align: right;
+}
+
+
+
+table {
+  color: #7F7F7F;
+  font: 0.8em/1.6em "Trebuchet MS",Verdana,sans-serif;
+  border-collapse: collapse;
+}
+
+table,caption {
+  margin: 0 auto;
+  border-right: 1px solid #CCC;
+  border-left: 1px solid #CCC
+}
+
+caption,th,td {
+  border-left: 0;
+  padding: 10px
+}
+
+caption,thead th,tfoot th,tfoot td {
+  background-color: #E63C1E;
+  color: #FFF;
+  font-weight: bold;
+  text-transform: uppercase
+}
+
+thead th {
+  background-color: #C30;
+  color: #FFB3A6;
+  text-align: center
+}
+
+tbody th {
+  padding: 20px 10px
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #F7F7F7;
+  color: #666
+}
+
+tbody a {
+  padding: 1px 2px;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px dotted #E63C1E
+}
+
+tbody a:active,tbody a:hover,tbody a:focus,tbody a:visited {
+  color: #666
+}
+
+tbody tr:hover {
+  background-color: #EEE;
+  color: #333
+}
+
+tbody tr:hover a {
+  background-color: #FFF
+}
+
+tbody td+td+td+td a {
+  color: #C30;
+  font-weight: bold;
+  border-bottom: 0
+}
+
+tbody td+td+td+td a:active,tbody td+td+td+td a:hover,tbody td+td+td+td a:focus,tbody td+td+td+td a:visited {
+  color: #E63C1E
+}
+
+tbody td a[href="http://www.rodcast.com.br/"] {
+  margin: 0 auto;
+  display: block;
+  width: 15px;
+  height: 15px;
+  background: transparent url('data:image/gif;base64,R0lGODlhDwAPAIAAACEpMf///yH5BAAAAAAALAAAAAAPAA8AAAIjjA8Qer0JmYvULUOlxXEjaEndliUeA56c97TqSD5pfJnhNxYAOw%3D%3D') no-repeat;
+  text-indent: -999em;
+  border-bottom: 0
+}
+
+tbody a:visited:after {
+  font-family: Verdana,sans-serif;
+  content: "\00A0\221A"
 }
