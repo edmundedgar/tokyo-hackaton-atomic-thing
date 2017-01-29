@@ -33,15 +33,15 @@ function createHold(company, price, expiry, extid, url){
 
 }
 
-function balancePayable(){
-  var atomic = Atomic.deployed();
-  getUserHolds();
-  atomic.balancePayable.call(hold_ids, {from: account}).then(function(value){
-    console.log(value);
-  }).catch(function(e){
-    console.log(e);
-  });
-}
+// function balancePayable(){
+//   var atomic = Atomic.deployed();
+//   getUserHolds();
+//   atomic.balancePayable.call(hold_ids, {from: account}).then(function(value){
+//     console.log(value);
+//   }).catch(function(e){
+//     console.log(e);
+//   });
+// }
 
 function isValid(){
   var atomic = Atomic.deployed();
@@ -85,21 +85,22 @@ function getUserHolds(){
 function complete(){
   var atomic = Atomic.deployed();
   getUserHolds();
-  atomic.isValid.call(hold_ids).then(function(bool){
-    console.log('hold_ids', hold_ids[2]);
-    if (bool) {
-      atomic.balancePayable.call(hold_ids).then(function(val){
-        console.log('val',val.toString());
-      }).catch(function(e){
-        console.log(e);
-      });
-
-    } else {
-      console.log(bool)
-    }
+  atomic.balancePayable.call(hold_ids).then(function(val){
+    console.log('val',val.toString());
   }).catch(function(e){
     console.log(e);
   });
+  // atomic.isValid.call(hold_ids).then(function(bool){
+  //   console.log('hold_ids', hold_ids[2]);
+  //   if (bool) {
+      
+
+  //   } else {
+  //     console.log(bool)
+  //   }
+  // }).catch(function(e){
+  //   console.log(e);
+  // });
 
 }
 
@@ -134,14 +135,15 @@ function initHoldList(){
           $title = $('<h2 />').addClass('title').text(data.title),
           $detail = $('<p />').addClass('detail').text(data.detail),
           $price = $('<h2 />').addClass('title price').text(data.price),
-          $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry*1000))),
-          $addBtn = $('<button />').addClass('add').attr('data-price', web3.toWei(data.price, 'ether')).attr('data-expiry', data.expiry).attr('data-extid', web3.toHex(data.external_id)).attr('data-company', '0xdc36523ab6692b68e5a37614118aaa675691abcd').attr('data-url', pair).text(' ADD ');
+          $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
+          $addBtn = $('<button />').addClass('add').attr('data-price', web3.toWei(data.price, 'ether')).attr('data-expiry', data.expiry).attr('data-extid', web3.toHex(data.external_id)).attr('data-company', '0xdc36523ab6692b68e5a37614118aaa675691abcd').attr('data-url', pair).text(' ADD '),
+          $removeBtn = $('<button />').addClass('remove').text('REMOVE');
 
       $holdThumbWrap.append($photo);
       $holdDetailWrap.append($title).append($detail);
       $holdPriceWrap.append($price);
       $holdExpiryWrap.append($expiry);
-      $btnWrap.append($addBtn);
+      $btnWrap.append($addBtn).append($removeBtn);
       $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap).append($btnWrap);
 
       $target.append($container);
@@ -176,7 +178,8 @@ function initHoldList(){
               $title = $('<h2 />').addClass('title').text(data.title),
               $detail = $('<p />').addClass('detail').text(data.detail),
               $price = $('<h2 />').addClass('title price').text(data.price),
-              $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry*1000)));
+              $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
+              $removeBtn = $('<button />').addClass('remove').text('REMOVE');
 
           var $hold_id_box = $('<input class="hold_id" type="text" />').val(item[0]);
           $holdExpiryWrap.append($hold_id_box);
@@ -185,7 +188,8 @@ function initHoldList(){
           $holdDetailWrap.append($title).append($detail);
           $holdPriceWrap.append($price);
           $holdExpiryWrap.append($expiry);
-          $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap);
+          $btnWrap.append($removeBtn);
+          $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap).append($btnWrap);
 
           $target.append($container);
           }).fail(function(e){
