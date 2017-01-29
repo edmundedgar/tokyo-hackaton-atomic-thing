@@ -1,40 +1,7 @@
 var accounts;
 var account;
 var totalAmount = 0;
-
-function setStatus(message) {
-  var status = document.getElementById("status");
-  status.innerHTML = message;
-};
-
-function refreshBalance() {
-  var meta = MetaCoin.deployed();
-
-  meta.getBalance.call(account, {from: account}).then(function(value) {
-    var balance_element = document.getElementById("balance");
-    balance_element.innerHTML = value.valueOf();
-  }).catch(function(e) {
-    console.log(e);
-    setStatus("Error getting balance; see log.");
-  });
-};
-
-function sendCoin() {
-  var meta = MetaCoin.deployed();
-
-  var amount = parseInt(document.getElementById("amount").value);
-  var receiver = document.getElementById("receiver").value;
-
-  setStatus("Initiating transaction... (please wait)");
-
-  meta.sendCoin(receiver, amount, {from: account}).then(function() {
-    setStatus("Transaction complete!");
-    refreshBalance();
-  }).catch(function(e) {
-    console.log(e);
-    setStatus("Error sending coin; see log.");
-  });
-};
+var hold_ids = [];
 
 function watchEvent() {
   var atomic = Atomic.deployed();
@@ -66,28 +33,67 @@ function createHold(company, price, expiry, extid, url){
 
 }
 
-function removeHoldByUser(extid){
+function balancePayable(){
+  var atomic = Atomic.deployed();
+  getUserHolds();
+  atomic.balancePayable.call(hold_ids, {from: account}).then(function(value){
+    console.log(value);
+  }).catch(function(e){
+    console.log(e);
+  });
 }
 
-
-
-function getUserHolds(){
+function isValid(){
   var atomic = Atomic.deployed();
-  atomic.countUserHolds.call(account).then(function(value){
+
+  getUserHolds();
+  atomic.isValid.call(hold_ids, {from: account}).then(function(value){
     console.log(value);
   }).catch(function(e){
     console.log(e);
   });
 
-  // atomic.user_holds.call().then(function(result){
-  //   console.log(result);
-  // }).catch(function(e){
-  //   console.log(e);
-  //   setStatus("Error getting balance; see log.");
-  // })
 }
 
-function complete(hold_ids){
+function removeHoldByUser(extid){
+}
+
+function getUserHolds(){
+  var atomic = Atomic.deployed();
+  hold_ids = [];
+  atomic.countUserHolds.call(account).then(function(value){
+    console.log(value.c[0]);
+    holdCount = value.c[0];
+    for (var i = holdCount - 1; i >= 0; i--) {
+      atomic.userHoldAtIndex.call(account, i).then(function(item){
+        hold_ids.push(item[0]);
+        console.log('item0',item[0]);
+      }).catch(function(e){
+        console.log(e);
+      });
+    }
+  });
+  console.log('hold_ids', hold_ids);
+}
+
+function complete(){
+  var atomic = Atomic.deployed();
+  getUserHolds();
+  atomic.isValid.call(hold_ids).then(function(bool){
+    console.log('hold_ids', hold_ids[2]);
+    if (bool) {
+      atomic.balancePayable.call(hold_ids).then(function(val){
+        console.log('val',val.toString());
+      }).catch(function(e){
+        console.log(e);
+      });
+
+    } else {
+      console.log(bool)
+    }
+  }).catch(function(e){
+    console.log(e);
+  });
 
 }
 
@@ -123,7 +129,7 @@ function initHoldList(){
           $detail = $('<p />').addClass('detail').text(data.detail),
           $price = $('<h2 />').addClass('title price').text(data.price),
           $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
-          $addBtn = $('<button />').addClass('add').attr('data-price', web3.toWei(data.price, 'ether')).attr('data-expiry', data.expiry).attr('data-extid', web3.toHex(data.external_id)).attr('data-company', '0xdc36523ab6692b68e5a37614118aaa675691abcd').attr('data-url', pair);
+          $addBtn = $('<button />').addClass('add').attr('data-price', web3.toWei(data.price, 'ether')).attr('data-expiry', data.expiry).attr('data-extid', web3.toHex(data.external_id)).attr('data-company', '0xdc36523ab6692b68e5a37614118aaa675691abcd').attr('data-url', pair).text(' ADD ');
 
       $holdThumbWrap.append($photo);
       $holdDetailWrap.append($title).append($detail);
@@ -145,7 +151,7 @@ function initHoldList(){
     holdCount = value.c[0];
     for (var i = holdCount - 1; i >= 0; i--) {
       atomic.userHoldAtIndex.call(account, i).then(function(item){
-        console.log('item', item)
+        // console.log('item', item)
         $.ajax({
           type: 'get',
           dataType: 'json',
@@ -201,10 +207,11 @@ window.onload = function() {
 
     accounts = accs;
     account = accounts[0];
-    console.log(accs, account)
+    // console.log('currentAccount', account)
 
     initHoldList();
     watchEvent();
+    getUserHolds();
   });
 
   web3.eth.filter("latest").watch(function(e, blockHash) {
@@ -225,5 +232,9 @@ window.onload = function() {
 
   $('body').on('click', '.remove', function(event) {
     console.log('hogehoge');
+  })
+
+  $('#reserve').on('click', function(){
+    complete();
   })
 }
