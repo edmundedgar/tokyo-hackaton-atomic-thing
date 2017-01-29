@@ -45030,7 +45030,7 @@ window.addEventListener('load', function() {
 
                                                                 
 
-  [Atomic,ConvertLib,MetaCoin,Migrations].forEach(function(contract) {         
+  [Atomic,ConvertLib,Migrations,MetaCoin].forEach(function(contract) {         
 
     contract.setProvider(window.web3.currentProvider);          
 
@@ -45137,7 +45137,7 @@ function initHoldList(){
 
   // insert from URL_Parameter *Need ADD/REMOVE Button.
   var pair = location.search.substring(1).split('&');
-  var ffff = 'http://localhost:8080/images/hotel.json';
+  var ffff = 'http://localhost:8080/images/airplane.json';
   ffff = web3.toHex(ffff);
   console.log(ffff);
    pair = web3.toAscii(pair[0])
@@ -45181,7 +45181,37 @@ function initHoldList(){
     holdCount = value.c[0];
     for (var i = holdCount - 1; i >= 0; i--) {
       atomic.userHoldAtIndex.call(account, i).then(function(item){
-        console.log(item);
+        console.log('item', item);
+        $.ajax({
+          type: 'get',
+          dataType: 'json',
+          url: item[8]
+        }).done(function(res) {
+          console.log(res);
+          var data = res[0];
+          var $container = $('<tr />'),
+              $holdThumbWrap = $('<th />'),
+              $holdDetailWrap = $('<td />'),
+              $holdPriceWrap = $('<td />'),
+              $holdExpiryWrap = $('<td />'),
+              $btnWrap = $('<td />');
+
+          var $photo = $('<img />').attr('src', data.thumb),
+              $title = $('<h2 />').addClass('title').text(data.title),
+              $detail = $('<p />').addClass('detail').text(data.detail),
+              $price = $('<h2 />').addClass('title').text(web3.toWei(data.price, 'ether')),
+              $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry)));
+
+          $holdThumbWrap.append($photo);
+          $holdDetailWrap.append($title).append($detail);
+          $holdPriceWrap.append($price);
+          $holdExpiryWrap.append($expiry);
+          $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap);
+
+          $target.append($container);
+          }).fail(function(e){
+            console.log(e);
+          });
       }).catch(function(e){
         console.log(e);
       })
@@ -45229,4 +45259,8 @@ window.onload = function() {
 
     createHold(company, price, expiry, extid, url);
   });
+
+  $('body').on('click', '.remove', function(event) {
+    console.log('hogehoge');
+  })
 }
