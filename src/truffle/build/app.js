@@ -6219,9 +6219,9 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "type": "event"
       }
     },
-    "updated_at": 1485652939676,
+    "updated_at": 1485655780724,
     "links": {},
-    "address": "0x8d3d9da24f387e12eb1e11dea3419eece4c4aa52"
+    "address": "0xae02c10879a6ed8ec1db4b278319b796d35d2585"
   }
 };
 
@@ -6727,9 +6727,9 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     ],
     "unlinked_binary": "0x6060604052346000575b6076806100176000396000f300606060405263ffffffff60e060020a60003504166396e4ee3d81146022575b6000565b602e6004356024356040565b60408051918252519081900360200190f35b8181025b929150505600a165627a7a7230582071b45db3dccbd6c528be82d3a0ec96095858919485b2748be2b7c328f75808760029",
     "events": {},
-    "updated_at": 1485652939668,
+    "updated_at": 1485655780731,
     "links": {},
-    "address": "0x588cc00e8461f92e31eef3ad4f6aa3061870d91d"
+    "address": "0x40629742edb79256d0a126916d0440e7ce8bea96"
   }
 };
 
@@ -7321,11 +7321,11 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "type": "event"
       }
     },
-    "updated_at": 1485652939680,
+    "updated_at": 1485655780735,
     "links": {
-      "ConvertLib": "0x588cc00e8461f92e31eef3ad4f6aa3061870d91d"
+      "ConvertLib": "0x40629742edb79256d0a126916d0440e7ce8bea96"
     },
-    "address": "0x944b94dcf57dc602fcc1a613d0f2dfcef82ed7c3"
+    "address": "0x416011d187757f1e58c50ea1a24a1055860934d2"
   }
 };
 
@@ -7866,8 +7866,8 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     ],
     "unlinked_binary": "0x606060405234610000575b60008054600160a060020a03191633600160a060020a03161790555b5b610190806100366000396000f300606060405263ffffffff60e060020a6000350416630900f0108114610045578063445df0ac146100605780638da5cb5b1461007f578063fdacd576146100a8575b610000565b346100005761005e600160a060020a03600435166100ba565b005b346100005761006d61012d565b60408051918252519081900360200190f35b346100005761008c610133565b60408051600160a060020a039092168252519081900360200190f35b346100005761005e600435610142565b005b6000805433600160a060020a03908116911614156101275781905080600160a060020a031663fdacd5766001546040518263ffffffff1660e060020a02815260040180828152602001915050600060405180830381600087803b156100005760325a03f115610000575050505b5b5b5050565b60015481565b600054600160a060020a031681565b60005433600160a060020a039081169116141561015f5760018190555b5b5b505600a165627a7a723058209471d68425a842d8a14302602263ff9d5ceab5284e4cb6cc461baeec5264717d0029",
     "events": {},
-    "updated_at": 1485652939682,
-    "address": "0x148eda7bc194f8bc201c4fc3427da883d358fb4c",
+    "updated_at": 1485655780739,
+    "address": "0xfcdd2a34837b418362b1d8f5355cb05aefd5773d",
     "links": {}
   }
 };
@@ -45096,7 +45096,7 @@ function createHold(company, price, expiry, extid, url){
   var atomic = Atomic.deployed();
 
   console.log(company, price, expiry, extid, account, url)
-  atomic.createHold(company, price, expiry, extid, {from: account}).then(function() {
+  atomic.createHold(company, price, expiry, extid, url, {from: account}).then(function() {
     console.log(atomic);
   }).catch(function(e) {
     console.log(e);
@@ -45132,10 +45132,50 @@ function complete(hold_ids){
 function initHoldList(){
   var atomic = Atomic.deployed();
   var holdCount;
+
+  var $target = $('tbody');
+
+  // insert from URL_Parameter *Need ADD/REMOVE Button.
   var pair = location.search.substring(1).split('&');
-  var ffff = 'http://4545.jp/atomic/hotel.json';
+  var ffff = 'http://localhost:8080/images/hotel.json';
+  ffff = web3.toHex(ffff);
+  console.log(ffff);
    pair = web3.toAscii(pair[0])
-  console.log(pair)
+  $.ajax({
+    type: 'get',
+    dataType: 'json',
+    url: pair
+  }).done(function(res) {
+    console.log(res);
+    var data = res[0];
+    var $container = $('<tr />'),
+        $holdThumbWrap = $('<th />'),
+        $holdDetailWrap = $('<td />'),
+        $holdPriceWrap = $('<td />'),
+        $holdExpiryWrap = $('<td />'),
+        $btnWrap = $('<td />');
+
+    var $photo = $('<img />').attr('src', data.thumb),
+        $title = $('<h2 />').addClass('title').text(data.title),
+        $detail = $('<p />').addClass('detail').text(data.detail),
+        $price = $('<h2 />').addClass('title').text(web3.toWei(data.price, 'ether')),
+        $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
+        $addBtn = $('<button />').addClass('add').attr('data-price', web3.toWei(data.price, 'ether')).attr('data-expiry', data.expiry).attr('data-extid', web3.toHex(data.external_id)).attr('data-company', '0xdc36523ab6692b68e5a37614118aaa675691abcd').attr('data-url', pair);
+
+    $holdThumbWrap.append($photo);
+    $holdDetailWrap.append($title).append($detail);
+    $holdPriceWrap.append($price);
+    $holdExpiryWrap.append($expiry);
+    $btnWrap.append($addBtn);
+    $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap).append($btnWrap);
+
+    $target.append($container);
+
+  }).fail(function(e){
+    console.log(e);
+  });
+
+  //insert from Contract *Need REMOVE Button.
   atomic.countUserHolds.call(account).then(function(value){
     console.log(value);
     holdCount = value.c[0];
@@ -45150,14 +45190,6 @@ function initHoldList(){
     console.log(e);
   });
 
-  var $container = $('<tr />'),
-        $holdPhotoWrap = $('<th />'),
-        $holdTitleWrap = $('<h2 />'),
-        $holdDetailWrap = $('<p />'),
-        $holdPriceWrap = $('<td />'),
-        $holdExpiryWrap = $('<td />'),
-        $addBtnWrap = $('<td />'),
-        $removeBtnWrap = $('<td />');
 }
 
 
@@ -45184,5 +45216,17 @@ window.onload = function() {
 
   web3.eth.filter("latest").watch(function(e, blockHash) {
     console.log(e, blockHash);
+  });
+
+  $('body').on('click', '.add', function(event) {
+    console.log($(this).attr('data-price'));
+    var $this = $(this);
+    var company = $this.attr('data-company'),
+        extid = $this.attr('data-extid'),
+        price = $this.attr('data-price'),
+        expiry = $this.attr('data-expiry'),
+        url = $this.attr('data-url');
+
+    createHold(company, price, expiry, extid, url);
   });
 }
