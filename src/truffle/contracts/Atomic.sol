@@ -14,7 +14,8 @@ contract Atomic {
         uint256 price, 
         uint256 expiry, 
         bytes32 external_id, 
-        uint256 status
+        uint256 status,
+        string detail_url
     );
 
     struct Hold {
@@ -24,6 +25,7 @@ contract Atomic {
         uint256 expiry;
         bytes32 external_id; // For the ID in the company's external database
         uint256 status;
+        string detail_url;
     }
 
     mapping(address=>bytes32[]) public user_holds;
@@ -39,7 +41,7 @@ contract Atomic {
             if (holds[hold_id].expiry < now) throw;
             holds[hold_id].status = 2;
             if (!holds[hold_id].company.send(holds[hold_id].price)) throw;
-            LogHoldChange(hold_id, holds[hold_id].user, holds[hold_id].company, holds[hold_id].price, holds[hold_id].expiry, holds[hold_id].external_id, 2);
+            LogHoldChange(hold_id, holds[hold_id].user, holds[hold_id].company, holds[hold_id].price, holds[hold_id].expiry, holds[hold_id].external_id, 2, holds[hold_id].detail_url);
         }
     }
 
@@ -61,7 +63,7 @@ contract Atomic {
         return company_holds[company].length;
     }
 
-    function userHoldAtIndex(address this_user, uint256 idx) constant returns (bytes32 hold_id, address user, address company, uint256 price, uint256 expiry, bytes32 external_id, uint256 status, bool has_next) {
+    function userHoldAtIndex(address this_user, uint256 idx) constant returns (bytes32 hold_id, address user, address company, uint256 price, uint256 expiry, bytes32 external_id, uint256 status, bool has_next, string detail_url) {
         bytes32 this_hold_id;
         if (idx < user_holds[this_user].length ) {
             this_hold_id = user_holds[this_user][idx];
@@ -76,11 +78,12 @@ contract Atomic {
             hold.expiry,
             hold.external_id,
             hold.status,
-            hold_has_next
+            hold_has_next,
+            hold.detail_url
         );
     }
 
-    function companyHoldAtIndex(address this_company, uint256 idx) constant returns (bytes32 hold_id, address user, address company, uint256 price, uint256 expiry, bytes32 external_id, uint256 status, bool has_next) {
+    function companyHoldAtIndex(address this_company, uint256 idx) constant returns (bytes32 hold_id, address user, address company, uint256 price, uint256 expiry, bytes32 external_id, uint256 status, bool has_next, string detail_url) {
         bytes32 this_hold_id;
         if (idx < company_holds[this_company].length ) {
             this_hold_id = company_holds[this_company][idx];
@@ -95,7 +98,8 @@ contract Atomic {
             hold.expiry,
             hold.external_id,
             hold.status,
-            hold_has_next
+            hold_has_next,
+            hold.detail_url
         );
     }
 
@@ -113,7 +117,7 @@ contract Atomic {
 
     // TODO: Pass in a signature for the company... 
     // ...so that you can only create holds for the company if they agree
-    function createHold(address company, uint256 price, uint256 expiry, bytes32 external_id) returns (bytes32 created_hold_id) {
+    function createHold(address company, uint256 price, uint256 expiry, bytes32 external_id, string detail_url) returns (bytes32 created_hold_id) {
         bytes32 hold_id = holdIDForParameters(msg.sender, company, price, expiry, external_id);
         holds[hold_id] = Hold(
             msg.sender,
@@ -121,11 +125,12 @@ contract Atomic {
             price,
             expiry,
             external_id,
-            1
+            1,
+            detail_url
         );
         user_holds[msg.sender].push(hold_id);
         company_holds[company].push(hold_id);
-        LogHoldChange(hold_id, msg.sender, company, price, expiry, external_id, 1);
+        LogHoldChange(hold_id, msg.sender, company, price, expiry, external_id, 1, detail_url);
         return hold_id;
     }
 
@@ -142,7 +147,7 @@ contract Atomic {
         }
 
         holds[hold_id].status = 0;
-        LogHoldChange(hold_id, holds[hold_id].user, holds[hold_id].company, holds[hold_id].price, holds[hold_id].expiry, holds[hold_id].external_id, 0);
+        LogHoldChange(hold_id, holds[hold_id].user, holds[hold_id].company, holds[hold_id].price, holds[hold_id].expiry, holds[hold_id].external_id, 0, holds[hold_id].detail_url);
         return true;
     }
 
@@ -155,7 +160,7 @@ contract Atomic {
         }
 
         holds[hold_id].status = 0;
-        LogHoldChange(hold_id, holds[hold_id].user, holds[hold_id].company, holds[hold_id].price, holds[hold_id].expiry, holds[hold_id].external_id, 0);
+        LogHoldChange(hold_id, holds[hold_id].user, holds[hold_id].company, holds[hold_id].price, holds[hold_id].expiry, holds[hold_id].external_id, 0, holds[hold_id].detail_url);
         return true;
     }
 

@@ -31,7 +31,8 @@ class AtomicThingTest(TestCase):
             keys.privtoaddr(t.k1),
             100000,
             1485685902,
-            decode_hex(to_hex(external_id1)[2:].zfill(64))
+            decode_hex(to_hex(external_id1)[2:].zfill(64)),
+            'http://k1.example.com/' + external_id1
         )
 
         hold_id1 = self.atomicthing.holdIDForParameters(
@@ -51,14 +52,15 @@ class AtomicThingTest(TestCase):
             keys.privtoaddr(t.k2),
             200000,
             1485685904,
-            decode_hex(to_hex(external_id2)[2:].zfill(64))
+            decode_hex(to_hex(external_id2)[2:].zfill(64)),
         )
 
         self.atomicthing.createHold(
             keys.privtoaddr(t.k2),
             200000,
             1485685904,
-            decode_hex(to_hex(external_id2)[2:].zfill(64))
+            decode_hex(to_hex(external_id2)[2:].zfill(64)),
+            'http://t1.example.com/' + external_id2
         )
 
         self.assertEqual(hold_id2, self.o[1]['hold_id'], "We got the expected hold ID in the logs")
@@ -89,7 +91,8 @@ class AtomicThingTest(TestCase):
             keys.privtoaddr(t.k4),
             250000,
             1485685904,
-            decode_hex(to_hex(external_id3)[2:].zfill(64))
+            decode_hex(to_hex(external_id3)[2:].zfill(64)),
+            'http://k4.example.com/asdf' + external_id3
         )
 
         self.assertEqual(self.atomicthing.getHoldStatus(hold_id2), 1)
