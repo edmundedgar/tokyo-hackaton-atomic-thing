@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-language" content="en">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MetaCoin - Default Truffle App</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href="./app.css" rel='stylesheet' type='text/css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="./app.js"></script>
+  <script src="./company.js"></script>
+</head>
+<body>
+
+<div id="wrap">
+
+<h3>Reservation site backend (automated script)</h3>
+
+<span id="status"></span>
+<table>
+ <tr>
+   <th>ID</th>
+   <!--
+   <th>TXID</th>
+   <th>Hold ID</th>
+   -->
+   <th>Address</th>
+   <th>Price</th>
+   <th>Expiry</th>
+   <th>Cancel</th>
+ </tr>
+ <tr class="template-row" style="display:none">
+   <td class="external_id"></td>
+   <!--
+   <td class="txid"></td>
+   <td class="hold_id"></td>
+   -->
+   <td class="user"></td>
+   <td class="price"></td>
+   <td class="expiry"></td>
+   <td class="cancel"><button class="remove">Cancel</button></td>
+ </tr>
+</table>
+</body>
+</html>

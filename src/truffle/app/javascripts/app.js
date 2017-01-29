@@ -167,7 +167,9 @@ window.onload = function() {
 
     // refreshBalance();
     watchEvent();
-    initHoldList();
+    if (!document.getElementById('company-page')) {
+      initHoldList();
+    }
   });
 
   web3.eth.filter("latest").watch(function(e, blockHash) {
