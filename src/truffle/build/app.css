@@ -126,6 +126,10 @@ h3 {
   font-size: 24px;
 }
 */
+body {
+  margin: 0;
+}
+
 .black {
   color: black;
 }
@@ -329,3 +333,10 @@ tbody a:visited:after {
   font-family: Verdana,sans-serif;
   content: "\00A0\221A"
 }
+
+#total::after {
+  content: 'ETH';
+}
+
+
+

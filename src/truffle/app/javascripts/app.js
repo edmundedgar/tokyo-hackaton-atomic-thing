@@ -1,5 +1,6 @@
 var accounts;
 var account;
+var totalAmount = 0;
 
 function setStatus(message) {
   var status = document.getElementById("status");
@@ -41,7 +42,12 @@ function watchEvent() {
 
   event.watch(function(error, result){
     if (!error) {
-      console.log(result);
+      console.log('LogHoldChange',result);
+      $('.price').each(function(){
+        totalAmount = totalAmount + parseFloat(($(this).text()));
+        console.log(totalAmount);
+      })
+      $('#total').text(totalAmount);
     } else {
       console.log('!!!ERROR!!!')
     }
@@ -93,43 +99,45 @@ function initHoldList(){
 
   // insert from URL_Parameter *Need ADD/REMOVE Button.
   var pair = location.search.substring(1).split('&');
-  var ffff = 'http://localhost:8080/images/airplane.json';
+  var ffff = 'http://localhost:8080/images/car.json';
   ffff = web3.toHex(ffff);
   console.log(ffff);
-   pair = web3.toAscii(pair[0])
-  $.ajax({
-    type: 'get',
-    dataType: 'json',
-    url: pair
-  }).done(function(res) {
-    console.log(res);
-    var data = res[0];
-    var $container = $('<tr />'),
-        $holdThumbWrap = $('<th />'),
-        $holdDetailWrap = $('<td />'),
-        $holdPriceWrap = $('<td />'),
-        $holdExpiryWrap = $('<td />'),
-        $btnWrap = $('<td />');
+  pair = web3.toAscii(pair[0])
+  if (pair) {
+    $.ajax({
+      type: 'get',
+      dataType: 'json',
+      url: pair
+    }).done(function(res) {
+      // console.log(res);
+      var data = res[0];
+      var $container = $('<tr />'),
+          $holdThumbWrap = $('<th />'),
+          $holdDetailWrap = $('<td />'),
+          $holdPriceWrap = $('<td />'),
+          $holdExpiryWrap = $('<td />'),
+          $btnWrap = $('<td />');
 
-    var $photo = $('<img />').attr('src', data.thumb),
-        $title = $('<h2 />').addClass('title').text(data.title),
-        $detail = $('<p />').addClass('detail').text(data.detail),
-        $price = $('<h2 />').addClass('title').text(web3.toWei(data.price, 'ether')),
-        $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
-        $addBtn = $('<button />').addClass('add').attr('data-price', web3.toWei(data.price, 'ether')).attr('data-expiry', data.expiry).attr('data-extid', web3.toHex(data.external_id)).attr('data-company', '0xdc36523ab6692b68e5a37614118aaa675691abcd').attr('data-url', pair);
+      var $photo = $('<img />').attr('src', data.thumb),
+          $title = $('<h2 />').addClass('title').text(data.title),
+          $detail = $('<p />').addClass('detail').text(data.detail),
+          $price = $('<h2 />').addClass('title price').text(data.price),
+          $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry))),
+          $addBtn = $('<button />').addClass('add').attr('data-price', web3.toWei(data.price, 'ether')).attr('data-expiry', data.expiry).attr('data-extid', web3.toHex(data.external_id)).attr('data-company', '0xdc36523ab6692b68e5a37614118aaa675691abcd').attr('data-url', pair);
 
-    $holdThumbWrap.append($photo);
-    $holdDetailWrap.append($title).append($detail);
-    $holdPriceWrap.append($price);
-    $holdExpiryWrap.append($expiry);
-    $btnWrap.append($addBtn);
-    $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap).append($btnWrap);
+      $holdThumbWrap.append($photo);
+      $holdDetailWrap.append($title).append($detail);
+      $holdPriceWrap.append($price);
+      $holdExpiryWrap.append($expiry);
+      $btnWrap.append($addBtn);
+      $container.append($holdThumbWrap).append($holdDetailWrap).append($holdPriceWrap).append($holdExpiryWrap).append($btnWrap);
 
-    $target.append($container);
+      $target.append($container);
 
-  }).fail(function(e){
-    console.log(e);
-  });
+    }).fail(function(e){
+      console.log(e);
+    });
+  }
 
   //insert from Contract *Need REMOVE Button.
   atomic.countUserHolds.call(account).then(function(value){
@@ -137,13 +145,13 @@ function initHoldList(){
     holdCount = value.c[0];
     for (var i = holdCount - 1; i >= 0; i--) {
       atomic.userHoldAtIndex.call(account, i).then(function(item){
-        console.log('item', item);
+        console.log('item', item)
         $.ajax({
           type: 'get',
           dataType: 'json',
           url: item[8]
         }).done(function(res) {
-          console.log(res);
+          // console.log(res);
           var data = res[0];
           var $container = $('<tr />'),
               $holdThumbWrap = $('<th />'),
@@ -155,7 +163,7 @@ function initHoldList(){
           var $photo = $('<img />').attr('src', data.thumb),
               $title = $('<h2 />').addClass('title').text(data.title),
               $detail = $('<p />').addClass('detail').text(data.detail),
-              $price = $('<h2 />').addClass('title').text(web3.toWei(data.price, 'ether')),
+              $price = $('<h2 />').addClass('title price').text(data.price),
               $expiry = $('<h2 />').addClass('title').text(new Date(parseInt(data.expiry)));
 
           $holdThumbWrap.append($photo);
@@ -195,9 +203,8 @@ window.onload = function() {
     account = accounts[0];
     console.log(accs, account)
 
-    // refreshBalance();
-    watchEvent();
     initHoldList();
+    watchEvent();
   });
 
   web3.eth.filter("latest").watch(function(e, blockHash) {
