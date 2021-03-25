@@ -38,7 +38,7 @@ pyOpenSSL==16.2.0
 pysha3==0.3
 pytest==3.0.5
 python-dateutil==2.6.0
-PyYAML==3.12
+PyYAML==5.4
 repoze.lru==0.6
 requests==2.12.4
 rlp==0.4.4
