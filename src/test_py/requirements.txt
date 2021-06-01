@@ -47,7 +47,7 @@ secp256k1==0.13.2
 serpent==1.15
 six==1.10.0
 toposort==1.5
-urllib3==1.19.1
+urllib3==1.26.5
 web3==3.2.0
 Werkzeug==0.11.11
 wheel==0.24.0
